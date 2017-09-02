@@ -1,1 +1,56 @@
-<p>Form & grid go here!</p>
+<form class="form products-in-range" id="products_in_range_form" data-mage-init='{
+	"validation":{
+		"rules": {
+			"min_price": {
+				"required": true,
+        "validate-currency-dollar": true,
+        "validate-greater-than-zero": true
+			},
+      "max_price": {
+				"required": true,
+        "validate-currency-dollar": true,
+        "validate-greater-than-zero": true,
+        "validate-price-range": true
+			}
+		}
+	}
+}'>
+    <div class="field min-price">
+        <label class="label" for="min_price" data-role="min-price-label">
+            <span><?php echo __('Minimum Price'); ?></span>
+        </label>
+        <div class="control">
+            <input id="min_price"
+                   name="min_price"
+                   type="text"
+                   class="input-text"
+                   placeholder="<?php echo __('Minimum price'); ?>" />
+        </div>
+    </div>
+    <div class="field max-price">
+        <label class="label" for="max_price" data-role="max-price-label">
+            <span><?php echo __('Maximum Price'); ?></span>
+        </label>
+        <div class="control">
+            <input id="max_price"
+                   name="max_price"
+                   type="text"
+                   class="input-text"
+                   placeholder="<?php echo __('Maximum price'); ?>" />
+        </div>
+    </div>
+    <div class="actions">
+        <button type="submit"
+                title="<?php echo $block->escapeHtml(__('Search')) ?>"
+                class="action search">
+            <span><?php /* @escapeNotVerified */ echo __('Search'); ?></span>
+        </button>
+    </div>
+</form>
+<script>
+require(['jquery'], function($) {
+  $('#products_in_range_form').on('submit', function(e) {
+    e.preventDefault();
+  });
+});
+</script>
