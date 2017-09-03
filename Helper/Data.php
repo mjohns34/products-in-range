@@ -10,6 +10,8 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Helper\Product;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\Framework\Pricing\Helper\Data as PricingHelper;
 use Magento\Framework\DB\Select;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Framework\UrlInterface;
@@ -28,6 +30,12 @@ class Data extends AbstractHelper
     /** @var StoreManagerInterface */
     protected $storeManager;
 
+    /** @var Visibility */
+    protected $productVisibility;
+
+    /** @var PricingHelper */
+    protected $pricingHelper;
+
     /** @var float */
     protected $minPrice;
 
@@ -44,12 +52,16 @@ class Data extends AbstractHelper
         Context $context,
         CollectionFactory $productCollectionFactory,
         Product $productHelper,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Visibility $productVisibility,
+        PricingHelper $pricingHelper
         )
     {
         $this->productCollectionFactory = $productCollectionFactory;
         $this->productHelper = $productHelper;
         $this->storeManager = $storeManager;
+        $this->productVisibility = $productVisibility;
+        $this->pricingHelper = $pricingHelper;
         parent::__construct($context);
     }
 
@@ -89,6 +101,7 @@ class Data extends AbstractHelper
         ->addAttributeToSelect('thumbnail')
         ->setOrder('price', Select::SQL_ASC)
         ->addAttributeToFilter('status', Status::STATUS_ENABLED)
+        ->setVisibility($this->productVisibility->getVisibleInSiteIds())
         ->joinField(
             'qty',
             'cataloginventory_stock_item',
@@ -122,8 +135,10 @@ class Data extends AbstractHelper
                   . 'catalog/product' . $product->getThumbnail(),
               'sku' => $product->getSku(),
               'name' => $product->getName(),
-              'qty' => $product->getQty(),
-              'price' => $product->getPrice(),
+              'qty' => intval(($product->getQty()) ? $product->getQty() : 0),
+              'price' => $this->pricingHelper->currency(
+                $product->getFinalPrice(), true, false
+                ),
               'url' => $this->productHelper->getProductUrl($product->getId())
           ];
           $result[] = $productData;

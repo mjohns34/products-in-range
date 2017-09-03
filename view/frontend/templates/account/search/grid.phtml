@@ -48,6 +48,23 @@
     </div>
 </form>
 <div id='validation_errors' class='mage-error'></div>
+<div class="table-wrapper products-in-range">
+    <table class="data table table-products-in-range" id="products-in-range-table">
+        <caption class="table-caption"><?php echo __('Products') ?></caption>
+        <thead>
+            <tr>
+                <th scope="col" class="col id"><?php echo __('Thumbnail') ?></th>
+                <th scope="col" class="col date"><?php echo __('SKU') ?></th>
+                <th scope="col" class="col shipping"><?php echo __('Name') ?></th>
+                <th scope="col" class="col total"><?php echo __('Qty In Stock') ?></th>
+                <th scope="col" class="col status"><?php echo __('Price') ?></th>
+                <th scope="col" class="col actions"><?php echo __('Link') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 <script>
 require(['jquery',
 'mage/mage',
@@ -71,10 +88,41 @@ require(['jquery',
         showLoader: true,
         beforeSend: function() {
           $('#validation_errors').empty();
+          $('#products-in-range-table tbody').empty();
         }
     }).done(function(response) {
         if (response.hasOwnProperty('error')) {
             $('#validation_errors').append('<p>' + response.error + '</p>');
+        }
+
+        if (response.length > 0) {
+          // Append data to table element
+          var template = '<tr>\
+              <td data-th="<?php echo $block->escapeHtml(__('Thumbnail')) ?>" class="col thumbnail">\
+                  <img src="%1" name="%3" alt="%3" style="max-width:50px" />\
+              </td>\
+              <td data-th="<?php echo $block->escapeHtml(__('SKU')) ?>" class="col sku">%2</td>\
+              <td data-th="<?php echo $block->escapeHtml(__('Name')) ?>" class="col name">%3</td>\
+              <td data-th="<?php echo $block->escapeHtml(__('Qty In Stock')) ?>" class="col qty">%4</td>\
+              <td data-th="<?php echo $block->escapeHtml(__('Price')) ?>" class="col price">\
+                <?php echo $this->getCurrencySymbol(); ?>%5\
+              </td>\
+              <td data-th="<?php echo $block->escapeHtml(__('Link')) ?>" class="col link">\
+                  <a href="%6" class="action view" target="_blank">\
+                      <span><?php echo __('View Product') ?></span>\
+                  </a>\
+              </td>\
+          </tr>';
+          $.each(response, function(i, data) {
+            $('#products-in-range-table tbody').append(
+              template.replace('%1', data.thumbnail)
+                .replace('%2', data.sku)
+                .replace(/\%3/g, data.name)
+                .replace('%4', data.qty)
+                .replace('%5', data.price)
+                .replace('%6', data.url)
+            );
+          });
         }
     });
 
