@@ -8,11 +8,15 @@ namespace MirandaJohnson\ProductsInRange\Controller\Ajax;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
+use MirandaJohnson\ProductsInRange\Helper\Data;
 
 class Grid extends Action
 {
     /** @var JsonFactory */
     protected $resultJsonFactory;
+
+    /** @var Data */
+    protected $helper;
 
     /** @var float */
     protected $minPrice;
@@ -23,13 +27,16 @@ class Grid extends Action
     /**
      * @param Context $context
      * @param JsonFactory $resultJsonFactory
+     * @param Data $helper
      */
     public function __construct(
         Context $context,
-        JsonFactory $resultJsonFactory
+        JsonFactory $resultJsonFactory,
+        Data $helper
         )
     {
         $this->resultJsonFactory = $resultJsonFactory;
+        $this->helper = $helper;
         parent::__construct($context);
     }
 
@@ -46,8 +53,7 @@ class Grid extends Action
           'error' => 'Server-side validation failed. Please try again later.'
         ]);
       }
-
-      return $resultJson->setData($this->getRequest()->getPost());
+      return $resultJson->setData($this->getProductData());
     }
 
     /**
@@ -70,5 +76,18 @@ class Grid extends Action
         return false;
       }
       return true;
+    }
+
+    /**
+     * Get product data for grid
+     *
+     * @return array
+     */
+    protected function getProductData()
+    {
+      return $this->helper->setPriceRange([
+        'min_price' => $this->minPrice,
+        'max_price' => $this->maxPrice
+      ])->getProductCollection();
     }
 }
