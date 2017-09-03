@@ -42,6 +42,9 @@ class Data extends AbstractHelper
     /** @var float */
     protected $maxPrice;
 
+    /** @var string */
+    protected $sortBy;
+
     /**
      * @param Context $context
      * @param CollectionFactory $productCollectionFactory
@@ -62,6 +65,7 @@ class Data extends AbstractHelper
         $this->storeManager = $storeManager;
         $this->productVisibility = $productVisibility;
         $this->pricingHelper = $pricingHelper;
+        $this->sortBy = Select::SQL_ASC;
         parent::__construct($context);
     }
 
@@ -84,6 +88,26 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Set "sort by" value for product collection
+     *
+     * @param string $value
+     * @return $this
+     */
+    public function setSortBy(string $value)
+    {
+      switch ($value) {
+        case 'asc':
+          $this->sortBy = Select::SQL_ASC;
+          break;
+        case 'desc':
+          $this->sortBy = Select::SQL_DESC;
+          break;
+      }
+      $this->productCollection = null;
+      return $this;
+    }
+
+    /**
      * Get product collection filtered by price
      *
      * @param boolean $toArray
@@ -99,7 +123,7 @@ class Data extends AbstractHelper
         ])
         ->addAttributeToSelect('name')
         ->addAttributeToSelect('thumbnail')
-        ->setOrder('price', Select::SQL_ASC)
+        ->setOrder('price', $this->sortBy)
         ->addAttributeToFilter('status', Status::STATUS_ENABLED)
         ->setVisibility($this->productVisibility->getVisibleInSiteIds())
         ->joinField(
@@ -110,9 +134,8 @@ class Data extends AbstractHelper
         )
         ->setPageSize(10)
         ->setCurPage(1);
+        $this->productCollection = $productCollection;
       }
-      $this->productCollection = $productCollection;
-
       if ($toArray) {
         return $this->productCollectionToArray();
       } else {

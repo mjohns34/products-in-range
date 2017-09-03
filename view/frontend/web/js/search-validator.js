@@ -48,4 +48,13 @@ require([
   }, function() {
       return this.priceRangeErrorMessage;
   });
+
+  /**
+   * Checks if {v} matches one of "asc" or "desc"
+   * @param {string} v
+   * @returns {boolean}
+   */
+  $.validator.addMethod('validate-sort-by', function(v) {
+      return v.match(/^(asc|desc)$/i);
+  }, $.mage.__('Invalid "sort by" value.'));
 });

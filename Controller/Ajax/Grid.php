@@ -88,6 +88,8 @@ class Grid extends Action
       return $this->helper->setPriceRange([
         'min_price' => $this->minPrice,
         'max_price' => $this->maxPrice
-      ])->getProductCollection();
+      ])->setSortBy(
+        $this->getRequest()->getPost('sort_by')
+      )->getProductCollection();
     }
 }

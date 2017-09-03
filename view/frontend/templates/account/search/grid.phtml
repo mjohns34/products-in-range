@@ -11,7 +11,10 @@
         "validate-currency-dollar": true,
         "validate-greater-than-zero": true,
         "validate-price-range": true
-			}
+			},
+      "sort_by": {
+        "validate-sort-by": true
+      }
 		}
 	}
 }'>
@@ -37,6 +40,17 @@
                    type="text"
                    class="input-text"
                    placeholder="<?php echo __('Maximum price'); ?>" />
+        </div>
+    </div>
+    <div class="field sort">
+        <label class="label" for="sort_by" data-role="sort-label">
+            <span><?php echo __('Sort By Price'); ?></span>
+        </label>
+        <div class="control">
+          <select class="select" name="sort_by" id="sort_by">
+            <option value="asc"><?php echo __('Ascending'); ?></option>
+            <option value="desc"><?php echo __('Descending'); ?></option>
+          </select>
         </div>
     </div>
     <div class="actions">
