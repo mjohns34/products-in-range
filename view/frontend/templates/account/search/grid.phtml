@@ -1,3 +1,6 @@
+<p class="cms-content-important">
+  <?php echo __('Search products in the store by entering a price range in the fields below.'); ?>
+</p>
 <form class="form products-in-range" id="products_in_range_form" data-mage-init='{
 	"validation":{
 		"rules": {
@@ -18,6 +21,7 @@
 		}
 	}
 }'>
+  <fieldset class="fieldset">
     <div class="field min-price">
         <label class="label" for="min_price" data-role="min-price-label">
             <span><?php echo __('Minimum Price'); ?></span>
@@ -53,16 +57,20 @@
           </select>
         </div>
     </div>
-    <div class="actions">
-        <button type="submit"
-                title="<?php echo $this->escapeHtml(__('Search')) ?>"
-                class="action search">
-            <span><?php echo __('Search'); ?></span>
-        </button>
-    </div>
+  </fieldset>
+  <div class="actions">
+      <button type="submit"
+              title="<?php echo $this->escapeHtml(__('Search')) ?>"
+              class="action submit primary">
+          <span><?php echo __('Search'); ?></span>
+      </button>
+  </div>
 </form>
-<div id='validation_errors' class='mage-error'></div>
-<div class="table-wrapper products-in-range">
+<div id="validation_errors" class="mage-error block"></div>
+<div id="no_products_message" class="message notice">
+  <div>There are no products to display.</div>
+</div>
+<div class="table-wrapper products-in-range" style="display: none;">
     <table class="data table table-products-in-range" id="products-in-range-table">
         <caption class="table-caption"><?php echo __('Products') ?></caption>
         <thead>
@@ -110,10 +118,12 @@ require(['jquery',
         }
 
         if (response.length > 0) {
+          $('.table-wrapper.products-in-range').show();
+          $('#no_products_message').hide();
           // Append data to table element
           var template = '<tr>\
               <td data-th="<?php echo $block->escapeHtml(__('Thumbnail')) ?>" class="col thumbnail">\
-                  <img src="%1" name="%3" alt="%3" style="max-width:50px" />\
+                  <img src="%1" name="%3" alt="%3" style="max-width:80px" />\
               </td>\
               <td data-th="<?php echo $block->escapeHtml(__('SKU')) ?>" class="col sku">%2</td>\
               <td data-th="<?php echo $block->escapeHtml(__('Name')) ?>" class="col name">%3</td>\
@@ -137,6 +147,9 @@ require(['jquery',
                 .replace('%6', data.url)
             );
           });
+        } else {
+          $('.table-wrapper.products-in-range').hide();
+          $('#no_products_message').show();
         }
     });
 
