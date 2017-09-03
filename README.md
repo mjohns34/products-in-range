@@ -11,6 +11,10 @@ git clone https://github.com/mjohns34/products-in-range.git app/code/MirandaJohn
 ```
 bin/magento module:enable MirandaJohnson_ProductsInRange && bin/magento setup:upgrade
 ```
+* Redeploy static assets and flush cache
+```
+bin/magento setup:static-content:deploy && bin/magento cache:flush
+```
 
 ## How to Use
 The Products In Range module adds a new tab to the customer account section on the front end of the site. You can use this new section to search for products in the store filtered by price.

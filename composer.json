@@ -1,0 +1,24 @@
+{
+    "name": "mirandajohnson/module-products-in-range",
+    "type": "magento2-module",
+    "version": "0.0.1",
+    "homepage": "https://github.com/mjohns34/products-in-range",
+    "description": "Module for product search by price in customer account.",
+    "authors":[
+        {
+            "name": "Miranda Johnson"
+        }
+    ],
+    "require": {
+        "php": "~5.6.5|7.0.2|7.0.4|~7.0.6",
+        "magento/framework": "100.1.*"
+    },
+    "autoload": {
+      "files": [
+          "registration.php"
+      ],
+      "psr-4": {
+          "MirandaJohnson\\ProductsInRange\\": ""
+      }
+    }
+}
