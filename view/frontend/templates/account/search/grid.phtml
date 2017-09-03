@@ -41,16 +41,43 @@
     </div>
     <div class="actions">
         <button type="submit"
-                title="<?php echo $block->escapeHtml(__('Search')) ?>"
+                title="<?php echo $this->escapeHtml(__('Search')) ?>"
                 class="action search">
-            <span><?php /* @escapeNotVerified */ echo __('Search'); ?></span>
+            <span><?php echo __('Search'); ?></span>
         </button>
     </div>
 </form>
+<div id='validation_errors' class='mage-error'></div>
 <script>
-require(['jquery'], function($) {
+require(['jquery',
+'mage/mage',
+'mage/validation'], function($) {
   $('#products_in_range_form').on('submit', function(e) {
     e.preventDefault();
+
+    // Validate form
+    if (!$('#products_in_range_form').validation()
+        || !$('#products_in_range_form').validation('isValid')
+    ) {
+      return false;
+    }
+
+    // Load grid data
+    $.ajax({
+        url: '<?php echo $this->getAjaxGridUrl(); ?>',
+        type: 'POST',
+        data: $(this).serialize(),
+        contentType: 'application/x-www-form-urlencoded',
+        showLoader: true,
+        beforeSend: function() {
+          $('#validation_errors').empty();
+        }
+    }).done(function(response) {
+        if (response.hasOwnProperty('error')) {
+            $('#validation_errors').append('<p>' + response.error + '</p>');
+        }
+    });
+
   });
 });
 </script>
